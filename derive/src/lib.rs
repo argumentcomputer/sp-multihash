@@ -44,5 +44,5 @@ use synstructure::{decl_derive, Structure};
 
 decl_derive!([Multihash, attributes(mh)] => #[proc_macro_error] multihash);
 fn multihash(s: Structure) -> TokenStream {
-    multihash::multihash(s).into()
+  multihash::multihash(s).into()
 }
