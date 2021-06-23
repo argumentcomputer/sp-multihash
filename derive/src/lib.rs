@@ -18,15 +18,15 @@
 //! # Example
 //!
 //! ```
-//! use multihash::derive::Multihash;
-//! use multihash::{MultihashDigest, U32, U64};
+//! use sp_multihash::derive::Multihash;
+//! use sp_multihash::{MultihashDigest, U32, U64};
 //!
 //! #[derive(Clone, Copy, Debug, Eq, Multihash, PartialEq)]
 //! #[mh(alloc_size = U64)]
 //! pub enum Code {
-//!     #[mh(code = 0x01, hasher = multihash::Sha2_256, digest = multihash::Sha2Digest<U32>)]
+//!     #[mh(code = 0x01, hasher = sp_multihash::Sha2_256, digest = sp_multihash::Sha2Digest<U32>)]
 //!     Foo,
-//!     #[mh(code = 0x02, hasher = multihash::Sha2_512, digest = multihash::Sha2Digest<U64>)]
+//!     #[mh(code = 0x02, hasher = sp_multihash::Sha2_512, digest = sp_multihash::Sha2Digest<U64>)]
 //!     Bar,
 //! }
 //!
@@ -44,5 +44,5 @@ use synstructure::{decl_derive, Structure};
 
 decl_derive!([Multihash, attributes(mh)] => #[proc_macro_error] multihash);
 fn multihash(s: Structure) -> TokenStream {
-    multihash::multihash(s).into()
+  multihash::multihash(s).into()
 }

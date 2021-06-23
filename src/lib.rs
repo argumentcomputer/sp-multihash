@@ -66,7 +66,7 @@ pub use crate::hasher::{Digest, Hasher, Size, StatefulHasher};
 pub use crate::multihash::{Multihash as MultihashGeneric, MultihashDigest};
 pub use generic_array::typenum::{self, U128, U16, U20, U28, U32, U48, U64};
 #[cfg(feature = "derive")]
-pub use multihash_derive as derive;
+pub use sp_multihash_derive as derive;
 
 #[cfg(feature = "multihash-impl")]
 pub use crate::multihash_impl::{Code, Multihash};
