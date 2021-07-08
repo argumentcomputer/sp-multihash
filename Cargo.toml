@@ -12,7 +12,6 @@ repository = "https://github.com/yatima-inc/sp-multihash"
 documentation = "https://docs.rs/sp-multihash"
 description = "Multihash library for `no_std` use within Substrate"
 keywords = ["multihash", "no-std"]
-categories = ["no-std"]
 
 [features]
 default = ["derive", "multihash-impl", "secure-hashes"]
