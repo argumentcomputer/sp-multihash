@@ -5,6 +5,14 @@ members = ["derive", "."]
 name = "sp-multihash"
 version = "0.1.0"
 edition = "2018"
+authors = ["Samuel Burnham <sam@yatima.io>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/yatima-inc/sp-multihash"
+documentation = "https://docs.rs/sp-multihash"
+description = "Multihash library for `no_std` use within Substrate"
+keywords = ["multihash", "no-std"]
+categories = ["no-std"]
 
 [features]
 default = ["derive", "multihash-impl", "secure-hashes"]
