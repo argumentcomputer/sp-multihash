@@ -2,6 +2,9 @@
 
 Multihash library for `no_std` use within Substrate
 
+[![crates.io](https://img.shields.io/crates/v/sp-multihash)](https://crates.io/crates/sp-multihash)
+[![docs.rs](https://img.shields.io/docsrs/sp-multihash.svg)](https://docs.rs/sp-multihash)
+
 ## License
 
 ```

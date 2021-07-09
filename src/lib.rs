@@ -50,7 +50,7 @@
 //! [SCALE Codec]: https://github.com/paritytech/parity-scale-codec
 
 #![deny(missing_docs)]
-#![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(not(any(feature = "std", test)), no_std)]
 
 #[cfg(any(test, feature = "arb"))]
 mod arb;

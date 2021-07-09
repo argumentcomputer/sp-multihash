@@ -2,6 +2,10 @@
 name = "sp-multihash-derive"
 version = "0.1.0"
 edition = "2018"
+authors = ["Samuel Burnham <sam@yatima.io>"]
+license = "MIT"
+repository = "https://github.com/yatima-inc/sp-multihash"
+description = "Proc macro for deriving custom sp-multihash tables"
 
 [lib]
 proc-macro = true
