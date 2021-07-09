@@ -275,6 +275,8 @@ pub fn write_multihash(
   Ok(())
 }
 
+/// Reads 64 bits from a byte array into a u64 starting at the current Bytecursor position
+/// Adapted from unsigned-varint's read_u64 generated function
 pub fn read_u64(r: &mut ByteCursor) -> Result<u64, Error> {
   let mut b = varint_encode::u64_buffer();
   for i in 0..b.len() {

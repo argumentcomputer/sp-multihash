@@ -11,7 +11,8 @@ readme = "README.md"
 repository = "https://github.com/yatima-inc/sp-multihash"
 documentation = "https://docs.rs/sp-multihash"
 description = "Multihash library for `no_std` use within Substrate"
-keywords = ["multihash", "no-std"]
+keywords = ["multihash", "no_std"]
+categories = ["no-std"]
 
 [features]
 default = ["derive", "multihash-impl", "secure-hashes"]
@@ -50,7 +51,7 @@ sha-3 = { version = "0.9.0", default-features = false, optional = true, package 
 strobe-rs = { version = "0.6.2", default-features = false, optional = true }
 
 sp-std = {version = "3", default-features = false }
-bytecursor = { git = "https://github.com/yatima-inc/bytecursor", branch = "main" }
+bytecursor = "0.1.2"
 
 [dev-dependencies]
 criterion = "0.3.3"

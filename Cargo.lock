@@ -140,8 +140,9 @@ checksum = "65c1bf4a04a88c54f589125563643d773f3254b5c38571395e2b591c693bbc81"
 
 [[package]]
 name = "bytecursor"
-version = "0.1.0"
-source = "git+https://github.com/yatima-inc/bytecursor?branch=main#ceddcf7148286582bdec89a9490a362fb602f4ff"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "35497ec36ac85183621f1e7c346cea37b4d9886c9abb17fdeb20dc79e36d3210"
 dependencies = [
  "sp-std",
 ]
