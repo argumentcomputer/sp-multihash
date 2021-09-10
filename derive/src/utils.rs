@@ -1,12 +1,22 @@
 use proc_macro2::Span;
-use proc_macro_crate::{crate_name, FoundCrate};
-use syn::parse::{Parse, ParseStream};
-use syn::punctuated::Punctuated;
-use syn::Error;
+use proc_macro_crate::{
+  crate_name,
+  FoundCrate,
+};
+use syn::{
+  parse::{
+    Parse,
+    ParseStream,
+  },
+  punctuated::Punctuated,
+  Error,
+};
 
 pub fn use_crate(name: &str) -> Result<syn::Ident, Error> {
   match crate_name(name) {
-    Ok(FoundCrate::Name(krate)) => Ok(syn::Ident::new(&krate, Span::call_site())),
+    Ok(FoundCrate::Name(krate)) => {
+      Ok(syn::Ident::new(&krate, Span::call_site()))
+    }
     Ok(FoundCrate::Itself) => Ok(syn::Ident::new("crate", Span::call_site())),
     Err(err) => Err(Error::new(Span::call_site(), err)),
   }
@@ -36,11 +46,7 @@ pub struct Attr<K, V> {
 
 impl<K: Parse, V: Parse> Parse for Attr<K, V> {
   fn parse(input: ParseStream) -> syn::Result<Self> {
-    Ok(Self {
-      key: input.parse()?,
-      eq: input.parse()?,
-      value: input.parse()?,
-    })
+    Ok(Self { key: input.parse()?, eq: input.parse()?, value: input.parse()? })
   }
 }
 

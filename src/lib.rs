@@ -3,53 +3,56 @@
 //! Feature Flags
 //! -------------
 //!
-//! Multihash has lots of [feature flags], by default a table with cryptographically secure hashers
-//! is created.
+//! Multihash has lots of [feature flags], by default a table with
+//! cryptographically secure hashers is created.
 //!
-//! Some of the features are about specific hash functions, these are ("default" marks the hashers
-//! that are enabled by default):
+//! Some of the features are about specific hash functions, these are ("default"
+//! marks the hashers that are enabled by default):
 //!
 //!  - `blake2b`: (default) Enable Blake2b hashers
 //!  - `blake2s`: (default) Enable Blake2s hashers
-//!  - `identity`: Enable the Identity hashers (using it is discouraged as it's not a hash function
-//!     in the sense that it produces a fixed sized output independent of the input size)
+//!  - `identity`: Enable the Identity hashers (using it is discouraged as it's
+//!    not a hash function in the sense that it produces a fixed sized output
+//!    independent of the input size)
 //!  - `sha1`: Enable SHA-1 hasher
 //!  - `sha2`: (default) Enable SHA-2 hashers
 //!  - `sha3`: (default) Enable SHA-3 hashers
 //!  - `strobe`: Enable Strobe hashers
 //!
-//! In order to enable all cryptographically secure hashers, you can set the `secure-hashes`
-//! feature flag (enabled by default).
+//! In order to enable all cryptographically secure hashers, you can set the
+//! `secure-hashes` feature flag (enabled by default).
 //!
 //! The library has support for `no_std`, if you disable the `std` feature flag.
 //!
-//! The `multihash-impl` feature flag (enabled by default) enables a default Multihash
-//! implementation that contains some of the bundled hashers. If you want a different set of hash
-//! algorithms you can change this with enabled the corresponding features.
+//! The `multihash-impl` feature flag (enabled by default) enables a default
+//! Multihash implementation that contains some of the bundled hashers. If you
+//! want a different set of hash algorithms you can change this with enabled the
+//! corresponding features.
 //!
-//! For example if you only need SHA2 hasher, you could set the features in the `multihash`
-//! dependency like this:
+//! For example if you only need SHA2 hasher, you could set the features in the
+//! `multihash` dependency like this:
 //!
 //! ```toml
 //! multihash = { version = …, default-features = false, features = ["std", "multihash-impl", "sha2"] }
 //! ```
 //!
-//! If you want to customize your code table even more, for example you want only one specific hash
-//! digest size and not whole family, you would only enable the `derive` feature (enabled by
-//! default), which enables the [`Multihash` derive], together with the hashers you want.
+//! If you want to customize your code table even more, for example you want
+//! only one specific hash digest size and not whole family, you would only
+//! enable the `derive` feature (enabled by default), which enables the
+//! [`Multihash` derive], together with the hashers you want.
 //!
-//! The `arb` feature flag enables the quickcheck arbitrary implementation for property based
-//! testing.
+//! The `arb` feature flag enables the quickcheck arbitrary implementation for
+//! property based testing.
 //!
-//! For serializing the multihash there is support for [Serde] via the `serde-codec` feature and
-//! the [SCALE Codec] via the `scale-codec` feature.
+//! For serializing the multihash there is support for [Serde] via the
+//! `serde-codec` feature and the [SCALE Codec] via the `scale-codec` feature.
 //!
 //! [feature flags]: https://doc.rust-lang.org/cargo/reference/manifest.html#the-features-section
 //! [`Multihash` derive]: crate::derive
 //! [Serde]: https://serde.rs
 //! [SCALE Codec]: https://github.com/paritytech/parity-scale-codec
 
-#![deny(missing_docs)]
+#![deny(missing_docs, unsafe_code)]
 #![cfg_attr(not(any(feature = "std", test)), no_std)]
 
 #[cfg(any(test, feature = "arb"))]
@@ -61,31 +64,89 @@ mod multihash;
 #[cfg(feature = "multihash-impl")]
 mod multihash_impl;
 
-pub use crate::error::{Error, Result};
-pub use crate::hasher::{Digest, Hasher, Size, StatefulHasher};
-pub use crate::multihash::{Multihash as MultihashGeneric, MultihashDigest};
-pub use generic_array::typenum::{self, U128, U16, U20, U28, U32, U48, U64};
+pub use crate::{
+  error::{
+    Error,
+    Result,
+  },
+  hasher::{
+    Digest,
+    Hasher,
+    StatefulHasher,
+  },
+  multihash::{
+    Multihash as MultihashGeneric,
+    MultihashDigest,
+  },
+};
 #[cfg(feature = "derive")]
 pub use sp_multihash_derive as derive;
 
 #[cfg(feature = "multihash-impl")]
-pub use crate::multihash_impl::{Code, Multihash};
+pub use crate::multihash_impl::{
+  Code,
+  Multihash,
+};
 
 #[cfg(feature = "blake2b")]
-pub use crate::hasher_impl::blake2b::{Blake2b256, Blake2b512, Blake2bDigest, Blake2bHasher};
+pub use crate::hasher_impl::blake2b::{
+  Blake2b256,
+  Blake2b512,
+  Blake2bDigest,
+  Blake2bHasher,
+};
 #[cfg(feature = "blake2s")]
-pub use crate::hasher_impl::blake2s::{Blake2s128, Blake2s256, Blake2sDigest, Blake2sHasher};
+pub use crate::hasher_impl::blake2s::{
+  Blake2s128,
+  Blake2s256,
+  Blake2sDigest,
+  Blake2sHasher,
+};
 #[cfg(feature = "blake3")]
-pub use crate::hasher_impl::blake3::{Blake3Digest, Blake3Hasher, Blake3_256};
-pub use crate::hasher_impl::identity::{Identity256, IdentityDigest, IdentityHasher};
+pub use crate::hasher_impl::blake3::{
+  Blake3Digest,
+  Blake3Hasher,
+  Blake3_256,
+};
 #[cfg(feature = "sha1")]
-pub use crate::hasher_impl::sha1::{Sha1, Sha1Digest};
+pub use crate::hasher_impl::sha1::{
+  Sha1,
+  Sha1Digest,
+};
 #[cfg(feature = "sha2")]
-pub use crate::hasher_impl::sha2::{Sha2Digest, Sha2_256, Sha2_512};
+pub use crate::hasher_impl::sha2::{
+  Sha2Digest,
+  Sha2_256,
+  Sha2_512,
+};
 #[cfg(feature = "sha3")]
-pub use crate::hasher_impl::sha3::{Keccak224, Keccak256, Keccak384, Keccak512, KeccakDigest};
+pub use crate::hasher_impl::sha3::{
+  Keccak224,
+  Keccak256,
+  Keccak384,
+  Keccak512,
+  KeccakDigest,
+};
 #[cfg(feature = "sha3")]
-pub use crate::hasher_impl::sha3::{Sha3Digest, Sha3_224, Sha3_256, Sha3_384, Sha3_512};
+pub use crate::hasher_impl::sha3::{
+  Sha3Digest,
+  Sha3_224,
+  Sha3_256,
+  Sha3_384,
+  Sha3_512,
+};
 #[cfg(feature = "strobe")]
-pub use crate::hasher_impl::strobe::{Strobe256, Strobe512, StrobeDigest, StrobeHasher};
-pub use crate::hasher_impl::unknown::UnknownDigest;
+pub use crate::hasher_impl::strobe::{
+  Strobe256,
+  Strobe512,
+  StrobeDigest,
+  StrobeHasher,
+};
+pub use crate::hasher_impl::{
+  identity::{
+    Identity256,
+    IdentityDigest,
+    IdentityHasher,
+  },
+  unknown::UnknownDigest,
+};

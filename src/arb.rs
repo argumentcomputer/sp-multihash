@@ -1,16 +1,22 @@
-use quickcheck::{Arbitrary, Gen};
+use quickcheck::{
+  Arbitrary,
+  Gen,
+};
 use rand::{
-  distributions::{weighted::WeightedIndex, Distribution},
+  distributions::{
+    weighted::WeightedIndex,
+    Distribution,
+  },
   Rng,
 };
 
-use crate::{MultihashGeneric, U64};
+use crate::MultihashGeneric;
 
 /// Generates a random valid multihash.
-impl Arbitrary for MultihashGeneric<U64> {
+impl Arbitrary for MultihashGeneric<64> {
   fn arbitrary<G: Gen>(g: &mut G) -> Self {
-    // In real world lower multihash codes are more likely to happen, hence distribute them
-    // with bias towards smaller values.
+    // In real world lower multihash codes are more likely to happen, hence
+    // distribute them with bias towards smaller values.
     let weights = [128, 64, 32, 16, 8, 4, 2, 1];
     let dist = WeightedIndex::new(weights.iter()).unwrap();
     let code = match dist.sample(g) {
