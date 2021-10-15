@@ -6,9 +6,11 @@ use core::{
   convert::{
     TryFrom,
     TryInto,
+    AsRef,
   },
   fmt::Debug,
 };
+use sp_std::borrow::Borrow;
 
 #[cfg(feature = "serde-codec")]
 use serde_big_array::BigArray;
@@ -70,6 +72,23 @@ pub trait MultihashDigest<const S: usize>:
     Self: From<&'a D>;
 }
 
+/// The base type for Multihash that can be either unsized or sized.
+#[cfg_attr(feature = "serde-codec", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde-codec", derive(serde::Serialize))]
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
+#[doc(hidden)]
+pub struct MultihashBase<T: ?Sized> {
+  /// The code of the Multihash.
+  code: u64,
+  /// The actual size of the digest in bytes (not the allocated size).
+  size: u8,
+  /// The digest.
+  #[cfg_attr(feature = "serde-codec", serde(with = "BigArray"))]
+  #[cfg_attr(feature = "serde-codec", serde(bound(deserialize = "T: BigArray<'de>")))]
+  #[cfg_attr(feature = "serde-codec", serde(bound(serialize = "T: BigArray<'static>")))]
+  digest: T,
+}
+
 /// A Multihash instance that only supports the basic functionality and no
 /// hashing.
 ///
@@ -92,17 +111,24 @@ pub trait MultihashDigest<const S: usize>:
 /// assert_eq!(mh.size(), 32);
 /// assert_eq!(mh.digest(), &digest_bytes[2..]);
 /// ```
-#[cfg_attr(feature = "serde-codec", derive(serde::Deserialize))]
-#[cfg_attr(feature = "serde-codec", derive(serde::Serialize))]
-#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
-pub struct Multihash<const S: usize> {
-  /// The code of the Multihash.
-  code: u64,
-  /// The actual size of the digest in bytes (not the allocated size).
-  size: u8,
-  /// The digest.
-  #[cfg_attr(feature = "serde-codec", serde(with = "BigArray"))]
-  digest: [u8; S],
+pub type Multihash<const S: usize> = MultihashBase<[u8; S]>;
+
+/// A dynamically sized version of Multihash. Any Multihash can be cast to
+/// DynMultihash by dereferencing it.
+///
+///
+/// # Example
+///
+/// ```
+/// use sp_multihash::{Multihash, DynMultihash};
+///
+/// let mh: Multihash = Multihash::default();
+/// let dmh: &DynMultihash = &mh;
+/// ```
+pub type DynMultihash = MultihashBase<[u8]>;
+
+impl<const S: usize> Borrow<DynMultihash> for Multihash<S> {
+  fn borrow(&self) -> &DynMultihash { self }
 }
 
 impl<const S: usize> Default for Multihash<S> {
@@ -120,15 +146,6 @@ impl<const S: usize> Multihash<S> {
     digest[..size].copy_from_slice(input_digest);
     Ok(Self { code, size: size as u8, digest })
   }
-
-  /// Returns the code of the multihash.
-  pub fn code(&self) -> u64 { self.code }
-
-  /// Returns the size of the digest.
-  pub fn size(&self) -> u8 { self.size }
-
-  /// Returns the digest.
-  pub fn digest(&self) -> &[u8] { &self.digest[..self.size as usize] }
 
   /// Reads a multihash from a byte stream.
   pub fn read(r: &mut ByteCursor) -> Result<Self, Error>
@@ -160,6 +177,22 @@ impl<const S: usize> Multihash<S> {
 
     Ok(result)
   }
+}
+
+impl<T: ?Sized> MultihashBase<T>
+  where T: AsRef<[u8]>
+{
+  /// Returns the code of the multihash.
+  #[inline]
+  pub fn code(&self) -> u64 { self.code }
+
+  /// Returns the size of the digest.
+  #[inline]
+  pub fn size(&self) -> u8 { self.size }
+
+  /// Returns the digest.
+  #[inline]
+  pub fn digest(&self) -> &[u8] { &self.digest.as_ref()[..self.size as usize] }
 
   /// Writes a multihash to a byte stream.
   pub fn write(&self, w: &mut ByteCursor) -> Result<(), Error> {
@@ -177,19 +210,22 @@ impl<const S: usize> Multihash<S> {
 
 // Don't hash the whole allocated space, but just the actual digest
 #[allow(clippy::derive_hash_xor_eq)]
-impl<const S: usize> core::hash::Hash for Multihash<S> {
-  fn hash<T: core::hash::Hasher>(&self, state: &mut T) {
+impl<T: ?Sized> core::hash::Hash for MultihashBase<T>
+where T: AsRef<[u8]> {
+  fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
     self.code.hash(state);
     self.digest().hash(state);
   }
 }
 
-impl<const S: usize> From<Multihash<S>> for Vec<u8> {
-  fn from(multihash: Multihash<S>) -> Self { multihash.to_bytes() }
+impl<T> From<MultihashBase<T>> for Vec<u8>
+where T: AsRef<[u8]> {
+  fn from(multihash: MultihashBase<T>) -> Self { multihash.to_bytes() }
 }
 
 #[cfg(feature = "scale-codec")]
-impl<const S: usize> parity_scale_codec::Encode for Multihash<S> {
+impl<T: ?Sized> parity_scale_codec::Encode for MultihashBase<T>
+where T: AsRef<[u8]> {
   fn encode_to<EncOut: parity_scale_codec::Output + ?Sized>(
     &self,
     dest: &mut EncOut,
@@ -201,7 +237,8 @@ impl<const S: usize> parity_scale_codec::Encode for Multihash<S> {
 }
 
 #[cfg(feature = "scale-codec")]
-impl<const S: usize> parity_scale_codec::EncodeLike for Multihash<S> {}
+impl<T> parity_scale_codec::EncodeLike for MultihashBase<T>
+where MultihashBase<T>: parity_scale_codec::Encode {}
 
 #[cfg(feature = "scale-codec")]
 impl<const S: usize> parity_scale_codec::Decode for Multihash<S> {
