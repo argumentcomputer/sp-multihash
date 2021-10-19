@@ -14,7 +14,7 @@ use core::{
 use serde_big_array::BigArray;
 
 use bytecursor::ByteCursor;
-use sp_std::vec::Vec;
+use alloc::vec::Vec;
 use unsigned_varint::{
   decode,
   encode as varint_encode,

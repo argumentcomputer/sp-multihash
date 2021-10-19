@@ -140,12 +140,9 @@ checksum = "65c1bf4a04a88c54f589125563643d773f3254b5c38571395e2b591c693bbc81"
 
 [[package]]
 name = "bytecursor"
-version = "0.1.2"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "35497ec36ac85183621f1e7c346cea37b4d9886c9abb17fdeb20dc79e36d3210"
-dependencies = [
- "sp-std",
-]
+checksum = "51d38c79fd37055ba2dab11613bd90cb6d5468bda5cb791a5fc3a4f65cf121b2"
 
 [[package]]
 name = "byteorder"
@@ -868,7 +865,7 @@ dependencies = [
 
 [[package]]
 name = "sp-multihash"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "blake2b_simd",
  "blake2s_simd",
@@ -887,7 +884,6 @@ dependencies = [
  "sha2",
  "sha3",
  "sp-multihash-derive",
- "sp-std",
  "strobe-rs",
  "unsigned-varint",
 ]
@@ -905,12 +901,6 @@ dependencies = [
  "syn",
  "synstructure",
 ]
-
-[[package]]
-name = "sp-std"
-version = "3.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "35391ea974fa5ee869cb094d5b437688fbf3d8127d64d1b9fed5822a1ed39b12"
 
 [[package]]
 name = "strobe-rs"
