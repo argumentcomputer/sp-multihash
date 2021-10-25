@@ -55,6 +55,8 @@
 #![deny(missing_docs, unsafe_code)]
 #![cfg_attr(not(any(feature = "std", test)), no_std)]
 
+extern crate alloc;
+
 #[cfg(any(test, feature = "arb"))]
 mod arb;
 mod error;
